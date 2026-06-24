@@ -1,0 +1,18 @@
+spring.application.name=expensetracker
+server.port=8080
+
+# MongoDB Configuration
+spring.data.mongodb.uri=mongodb://localhost:27017/expensetracker
+
+# JWT Security Configurations
+expensetracker.jwt.secret=REPLACE_WITH_A_LONG_RANDOM_SECRET_KEY_MIN_64_CHARS
+expensetracker.jwt.expirationMs=86400000
+
+# Groq AI Configuration (get your key from https://console.groq.com)
+expensetracker.groq.api-key=REPLACE_WITH_YOUR_GROQ_API_KEY
+
+# Mail Configuration
+spring.mail.host=localhost
+spring.mail.port=2525
+spring.mail.properties.mail.smtp.auth=false
+spring.mail.properties.mail.smtp.starttls.enable=false

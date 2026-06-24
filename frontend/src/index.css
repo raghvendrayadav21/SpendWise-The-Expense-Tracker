@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --brand-darkBg: #0B0F19;
+  --brand-cardBg: rgba(17, 24, 39, 0.65);
+  --brand-cardBgHover: rgba(17, 24, 39, 0.8);
+  --brand-cardBorder: rgba(255, 255, 255, 0.06);
+  --brand-inputBg: rgba(255, 255, 255, 0.03);
+  --brand-inputBgFocus: rgba(255, 255, 255, 0.05);
+  --brand-accent: #10B981;
+  --brand-accentHover: #059669;
+  --brand-textPrimary: #F3F4F6;
+  --brand-textSecondary: #9CA3AF;
+  
+  --font-sans: 'Inter', sans-serif;
+}
+
+:root.light {
+  --brand-darkBg: #F3F4F6;
+  --brand-cardBg: rgba(255, 255, 255, 0.85);
+  --brand-cardBgHover: rgba(255, 255, 255, 0.95);
+  --brand-cardBorder: rgba(0, 0, 0, 0.12);
+  --brand-inputBg: rgba(255, 255, 255, 0.95);
+  --brand-inputBgFocus: #FFFFFF;
+  --brand-accent: #10B981;
+  --brand-accentHover: #059669;
+  --brand-textPrimary: #111827;
+  --brand-textSecondary: #4B5563;
+}
+
+@theme {
+  --color-brand-darkBg: var(--brand-darkBg);
+  --color-brand-cardBg: var(--brand-cardBg);
+  --color-brand-cardBorder: var(--brand-cardBorder);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accentHover: var(--brand-accentHover);
+  --color-brand-textPrimary: var(--brand-textPrimary);
+  --color-brand-textSecondary: var(--brand-textSecondary);
+  
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background-color: var(--brand-darkBg);
+  color: var(--brand-textPrimary);
+  font-family: var(--font-sans);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+:root.light body {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.03) 0px, transparent 50%);
+}
+
+/* Glassmorphism styling helpers */
+.glass-panel {
+  background: var(--brand-cardBg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--brand-cardBorder);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: var(--brand-cardBgHover);
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
+  transform: translateY(-2px);
+}
+
+.glass-input {
+  background: var(--brand-inputBg);
+  border: 1px solid var(--brand-cardBorder);
+  color: var(--brand-textPrimary);
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  background: var(--brand-inputBgFocus);
+  border-color: #10B981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  outline: none;
+}
+
+/* Glowing text and buttons */
+.glow-text {
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.glow-btn {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+  transition: all 0.2s ease;
+}
+
+.glow-btn:hover {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.45);
+  transform: scale(1.02);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10B981;
+}
+
+/* Force theme styling on select dropdown options across all browsers */
+select option {
+  background-color: var(--brand-darkBg);
+  color: var(--brand-textPrimary);
+}
+
+/* Override Tailwind opacity classes for Light mode to fit color combinations */
+:root.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+:root.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+:root.light .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+:root.light .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.09) !important;
+}
+
+/* Custom styling for HTML elements inside dynamic Gemini AI responses */
+.ai-insights-content ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  padding-left: 0.5rem !important;
+}
+
+.ai-insights-content li {
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+  color: #D1D5DB !important;
+}
+
+.ai-insights-content p {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.6 !important;
+  color: #E5E7EB !important;
+}
+
+.ai-insights-content strong {
+  color: #10B981 !important;
+  font-weight: 700 !important;
+}
+
+/* Floating animation for illustrations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+
