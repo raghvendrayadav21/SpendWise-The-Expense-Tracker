@@ -1,0 +1,12 @@
+# Tell GitHub Linguist to treat frontend JS/JSX as vendored
+# so Java becomes the primary detected language
+
+frontend/** linguist-vendored
+frontend/src/**/*.js linguist-vendored
+frontend/src/**/*.jsx linguist-vendored
+frontend/src/**/*.css linguist-vendored
+frontend/*.js linguist-vendored
+frontend/*.json linguist-vendored
+
+# Explicitly mark Java backend as the primary language
+backend/src/**/*.java linguist-language=Java
