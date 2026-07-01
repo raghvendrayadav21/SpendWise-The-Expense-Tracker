@@ -22,7 +22,7 @@ public class ExpenseController {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    private String getCurrentUserId() {
+    private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return userDetails.getId();
@@ -42,7 +42,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getExpenseById(@PathVariable String id) {
+    public ResponseEntity<?> getExpenseById(@PathVariable Long id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
 
@@ -54,7 +54,7 @@ public class ExpenseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateExpense(@PathVariable String id, @Valid @RequestBody Expense expenseDetails) {
+    public ResponseEntity<?> updateExpense(@PathVariable Long id, @Valid @RequestBody Expense expenseDetails) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
 
@@ -72,7 +72,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteExpense(@PathVariable String id) {
+    public ResponseEntity<?> deleteExpense(@PathVariable Long id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
 
@@ -88,8 +88,8 @@ public class ExpenseController {
     public ResponseEntity<List<Expense>> getExpensesByRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        // +1 day on endDate because MongoDB Between is exclusive on the upper bound
-        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(getCurrentUserId(), startDate, endDate.plusDays(1));
+        // JPA Between is inclusive on both ends, no +1 day workaround needed
+        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(getCurrentUserId(), startDate, endDate);
         return ResponseEntity.ok(expenses);
     }
 }

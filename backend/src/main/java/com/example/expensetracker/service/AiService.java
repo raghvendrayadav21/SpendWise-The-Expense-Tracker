@@ -28,7 +28,7 @@ public class AiService {
     @Value("${expensetracker.groq.api-key:}")
     private String defaultGroqApiKey;
 
-    public Map<String, Object> getInsights(String userId) {
+    public Map<String, Object> getInsights(Long userId) {
         LocalDate now = LocalDate.now();
         LocalDate startOfMonth = now.withDayOfMonth(1);
         LocalDate endOfMonth = now.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
@@ -105,7 +105,7 @@ public class AiService {
         return response;
     }
 
-    public String getCustomAnalysis(String userId, String analysisType, String clientApiKey) {
+    public String getCustomAnalysis(Long userId, String analysisType, String clientApiKey) {
         String apiKey = (clientApiKey != null && !clientApiKey.trim().isEmpty()) ? clientApiKey : defaultGeminiApiKey;
 
         // Fetch User context data
@@ -234,7 +234,7 @@ public class AiService {
         }
     }
 
-    public String answerQuestion(String userId, String question) {
+    public String answerQuestion(Long userId, String question) {
         String apiKey = (defaultGroqApiKey != null && !defaultGroqApiKey.trim().isEmpty()) ? defaultGroqApiKey : defaultGeminiApiKey;
 
         // Fetch User context data

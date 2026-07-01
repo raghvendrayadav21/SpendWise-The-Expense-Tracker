@@ -21,7 +21,7 @@ public class BudgetController {
     @Autowired
     private BudgetRepository budgetRepository;
 
-    private String getCurrentUserId() {
+    private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return userDetails.getId();
@@ -29,7 +29,7 @@ public class BudgetController {
 
     @PostMapping
     public ResponseEntity<Budget> createOrUpdateBudget(@Valid @RequestBody Budget budget) {
-        String userId = getCurrentUserId();
+        Long userId = getCurrentUserId();
         budget.setUserId(userId);
 
         // If a budget already exists for this category, update it instead of creating a duplicate
@@ -52,7 +52,7 @@ public class BudgetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBudget(@PathVariable String id, @Valid @RequestBody Budget budgetDetails) {
+    public ResponseEntity<?> updateBudget(@PathVariable Long id, @Valid @RequestBody Budget budgetDetails) {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Budget not found with id: " + id));
 
@@ -68,7 +68,7 @@ public class BudgetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBudget(@PathVariable String id) {
+    public ResponseEntity<?> deleteBudget(@PathVariable Long id) {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Budget not found with id: " + id));
 

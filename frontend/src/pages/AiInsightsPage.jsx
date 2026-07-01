@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  Sparkles, 
-  Target, 
-  BrainCircuit, 
-  AlertTriangle, 
-  CheckCircle,
-  Send
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Sparkles,
+  Target,
+  BrainCircuit,
+  AlertTriangle,
+  CheckCircle2,
+  Send,
+  Trash2,
+  Calendar,
+  ChevronRight,
+  TrendingDown,
+  Info
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -13,7 +19,7 @@ const AiInsightsPage = () => {
   const [insightsData, setInsightsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
-  
+
   // Chat Q&A States
   const [chatHistory, setChatHistory] = useState([
     {
@@ -25,7 +31,7 @@ const AiInsightsPage = () => {
   const [chatLoading, setChatLoading] = useState(false);
   const chatBottomRef = useRef(null);
 
-  // Auto-scroll to bottom whenever a new message arrives or AI is typing
+  // Auto-scroll to bottom
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, chatLoading]);
@@ -50,7 +56,6 @@ const AiInsightsPage = () => {
     const query = questionText || userQuestion;
     if (!query.trim()) return;
 
-    // Add user message to history
     const newUserMessage = { sender: 'user', text: query };
     setChatHistory(prev => [...prev, newUserMessage]);
     setUserQuestion('');
@@ -70,10 +75,29 @@ const AiInsightsPage = () => {
     }
   };
 
+  const clearChat = () => {
+    setChatHistory([
+      {
+        sender: 'ai',
+        text: 'Hello! I am <strong>SpendWise AI</strong>, your personal financial advisor. Ask me anything about your expenses, budgets, or savings — in <strong>any language</strong> you prefer!<br/><br/>Examples:<br/><ul><li><em>Where was my highest spending this month?</em></li><li><em>How can I control my expenses?</em></li><li><em>Kaha jyada kharch hua?</em> (Hindi/Hinglish also works!)</li></ul>'
+      }
+    ]);
+  };
+
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center flex-1 py-20">
-        <span className="w-12 h-12 border-4 border-brand-accent/20 border-t-brand-accent rounded-full animate-spin"></span>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2"><div className="skeleton h-8 w-52 rounded-lg" /><div className="skeleton h-4 w-72 rounded" /></div>
+          <div className="skeleton h-10 w-44 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="space-y-6">
+            <div className="glass-panel p-6 rounded-2xl h-56 skeleton" />
+            <div className="glass-panel p-5 rounded-2xl h-64 skeleton" />
+          </div>
+          <div className="lg:col-span-2 glass-panel rounded-2xl h-[560px] skeleton" />
+        </div>
       </div>
     );
   }
@@ -89,182 +113,217 @@ const AiInsightsPage = () => {
   }
 
   const { totalSpent, totalBudget, budgetStatuses, insights, generatedAt } = insightsData || {};
+  const healthPercent = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+  const isOverBudget = totalSpent > totalBudget;
+
+  const chatSuggestions = [
+    { label: 'Highest spending?', query: 'Where was my highest spending this month?' },
+    { label: 'How to control expenses?', query: 'How can I control my expenses?' },
+    { label: 'Savings plan?', query: 'Give me a savings plan for this month.' }
+  ];
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-8">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
+      <motion.div 
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0"
+      >
         <div>
-          <div className="flex items-center space-x-2">
-            <h1 className="text-3xl font-bold tracking-tight text-brand-textPrimary">AI Savings Analytics</h1>
-            <span className="text-[10px] uppercase font-extrabold tracking-widest px-2 py-0.5 rounded bg-brand-accent/20 text-brand-accent border border-brand-accent/30 animate-pulse">
+          <div className="flex items-center space-x-2.5">
+            <h1 className="text-3xl font-extrabold tracking-tight text-brand-textPrimary flex items-center">
+              AI Analytics
+            </h1>
+            <span className="text-[10px] uppercase font-extrabold tracking-widest px-2.5 py-1 rounded-full bg-brand-accentSoft text-brand-accent border border-brand-accent/20 animate-pulse-ring">
               Groq Llama 3.3 Active
             </span>
           </div>
           <p className="text-brand-textSecondary text-sm mt-1">Ask our artificial intelligence any query about your spending behavior or custom budgets.</p>
         </div>
-        <p className="text-xs text-brand-textSecondary font-mono bg-white/5 px-3 py-1.5 rounded-lg border border-brand-cardBorder">
+        <p className="text-xs text-brand-textSecondary font-mono bg-white/[0.03] px-3.5 py-2 rounded-xl border border-brand-cardBorder self-start">
           Last Synced: {generatedAt}
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
         {/* Left Side: Summary Metrics & Warnings */}
         <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
-            <div className="absolute -right-4 -bottom-4 opacity-5">
+          
+          {/* Budget Health Panel */}
+          <motion.div 
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="glass-panel p-6 rounded-2xl relative overflow-hidden border border-brand-cardBorder"
+          >
+            <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
               <BrainCircuit className="w-32 h-32 text-brand-accent" />
             </div>
 
-            <h3 className="text-lg font-bold mb-4 flex items-center">
+            <h3 className="text-base font-bold mb-4 flex items-center text-brand-textPrimary">
               <Target className="w-5 h-5 text-brand-accent mr-2" />
               Budget Health
             </h3>
 
             <div className="space-y-4">
               <div>
-                <div className="flex items-center justify-between text-xs text-brand-textSecondary mb-1">
+                <div className="flex items-center justify-between text-xs text-brand-textSecondary mb-1.5 font-medium">
                   <span>Aggregate Utilization</span>
-                  <span>{totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(0) : 0}%</span>
+                  <span className="font-mono font-bold text-brand-textPrimary">{healthPercent.toFixed(0)}%</span>
                 </div>
                 <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full rounded-full ${totalSpent > totalBudget ? 'bg-red-500' : 'bg-brand-accent'}`}
-                    style={{ width: `${Math.min(totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0, 100)}%` }}
-                  ></div>
+                  <motion.div 
+                    className={`h-full rounded-full ${isOverBudget ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'bg-brand-accent shadow-[0_0_10px_rgba(0,208,132,0.35)]'}`}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(healthPercent, 100)}%` }}
+                    transition={{ duration: 1.1, ease: 'easeOut' }}
+                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="bg-white/5 p-3 rounded-xl border border-brand-cardBorder">
-                  <span className="text-[10px] text-brand-textSecondary uppercase font-semibold">Total Spent</span>
-                  <p className="text-lg font-bold font-mono text-brand-accent mt-0.5">₹{totalSpent.toFixed(2)}</p>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="bg-white/[0.025] p-3 rounded-xl border border-brand-cardBorder">
+                  <span className="text-[10px] text-brand-textSecondary uppercase font-bold tracking-wider">Total Spent</span>
+                  <p className="text-lg font-extrabold font-mono text-brand-accent mt-0.5">₹{totalSpent.toFixed(0)}</p>
                 </div>
-                <div className="bg-white/5 p-3 rounded-xl border border-brand-cardBorder">
-                  <span className="text-[10px] text-brand-textSecondary uppercase font-semibold">Total Limit</span>
-                  <p className="text-lg font-bold font-mono text-blue-400 mt-0.5">₹{totalBudget.toFixed(2)}</p>
+                <div className="bg-white/[0.025] p-3 rounded-xl border border-brand-cardBorder">
+                  <span className="text-[10px] text-brand-textSecondary uppercase font-bold tracking-wider">Total Limit</span>
+                  <p className="text-lg font-extrabold font-mono text-blue-400 mt-0.5">₹{totalBudget.toFixed(0)}</p>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Mini Category status table */}
-          <div className="glass-panel p-5 rounded-2xl">
-            <h4 className="text-sm font-bold mb-3">Category Audits</h4>
+          <motion.div 
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.18, duration: 0.4 }}
+            className="glass-panel p-5 rounded-2xl border border-brand-cardBorder"
+          >
+            <h4 className="text-sm font-bold mb-4 flex items-center justify-between text-brand-textPrimary">
+              <span>Category Audits</span>
+              <Info className="w-3.5 h-3.5 text-brand-textSecondary opacity-60" />
+            </h4>
+            
             <div className="space-y-3.5">
               {budgetStatuses?.map((status, index) => {
                 const isOver = status.spent > status.limit;
                 return (
-                  <div key={index} className="flex items-center justify-between text-xs">
-                    <span className="text-brand-textSecondary">{status.category}</span>
+                  <div key={index} className="flex items-center justify-between text-xs border-b border-brand-cardBorder/30 pb-2 last:border-b-0 last:pb-0">
+                    <span className="text-brand-textSecondary font-medium">{status.category}</span>
                     <div className="flex items-center space-x-2">
-                      <span className="font-mono text-brand-textPrimary">₹{status.spent.toFixed(0)} / ₹{status.limit.toFixed(0)}</span>
+                      <span className="font-mono text-brand-textPrimary font-semibold">₹{status.spent.toFixed(0)} / ₹{status.limit.toFixed(0)}</span>
                       {isOver ? (
-                        <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+                        <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                       ) : (
-                        <CheckCircle className="w-3.5 h-3.5 text-brand-accent" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-brand-accent shrink-0" />
                       )}
                     </div>
                   </div>
                 );
               })}
               {budgetStatuses?.length === 0 && (
-                <p className="text-xs text-brand-textSecondary italic">No category budgets defined yet.</p>
+                <p className="text-xs text-brand-textSecondary italic py-2">No category budgets defined yet.</p>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Right Side: Chat Container */}
-        <div className="lg:col-span-2 flex flex-col h-[600px] glass-panel rounded-2xl relative overflow-hidden border border-brand-cardBorder">
-          {/* Header */}
-          <div className="p-4 border-b border-brand-cardBorder bg-white/5 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-brand-accent animate-pulse" />
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.45 }}
+          className="lg:col-span-2 flex flex-col h-[600px] glass-panel rounded-2xl relative overflow-hidden border border-brand-cardBorder"
+        >
+          {/* Chat Header */}
+          <div className="p-4 border-b border-brand-cardBorder bg-white/[0.02] flex items-center justify-between z-10">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-1.5 bg-brand-accentSoft rounded-lg border border-brand-accent/15">
+                <Sparkles className="w-4.5 h-4.5 text-brand-accent animate-pulse" />
+              </div>
               <div>
                 <h3 className="text-sm font-bold text-brand-textPrimary">SpendWise AI Advisor</h3>
-                <p className="text-[10px] text-brand-textSecondary">Ask anything about your expenses</p>
+                <p className="text-[10px] text-brand-textSecondary">Powered by Llama 3.3 API</p>
               </div>
             </div>
             <button
-              onClick={() => setChatHistory([
-                {
-                  sender: 'ai',
-                  text: 'Hello! I am <strong>SpendWise AI</strong>, your personal financial advisor. Ask me anything about your expenses, budgets, or savings — in <strong>any language</strong> you prefer!<br/><br/>Examples:<br/><ul><li><em>Where was my highest spending this month?</em></li><li><em>How can I control my expenses?</em></li><li><em>Kaha jyada kharch hua?</em> (Hindi/Hinglish also works!)</li></ul>'
-                }
-              ])}
-              className="text-xs px-2.5 py-1 rounded bg-white/5 border border-brand-cardBorder hover:bg-white/10 text-brand-textSecondary hover:text-brand-textPrimary transition cursor-pointer"
+              onClick={clearChat}
+              className="inline-flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-xl bg-white/5 border border-brand-cardBorder hover:bg-white/10 text-brand-textSecondary hover:text-brand-textPrimary transition cursor-pointer"
             >
-              Clear Chat
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear Chat</span>
             </button>
           </div>
 
           {/* Chat Feed */}
-          <div className="flex-1 p-5 overflow-y-auto space-y-4 flex flex-col">
-            {chatHistory.map((msg, index) => {
-              const isAi = msg.sender === 'ai';
-              return (
-                <div 
-                  key={index}
-                  className={`flex flex-col max-w-[85%] ${isAi ? 'self-start items-start' : 'self-end items-end'}`}
-                >
-                  <span className="text-[9px] uppercase font-semibold text-brand-textSecondary tracking-wider mb-1 px-1">
-                    {isAi ? 'SpendWise AI' : 'You'}
-                  </span>
-                  <div className={`p-4 rounded-2xl text-sm leading-relaxed ${
-                    isAi 
-                      ? 'glass-panel text-brand-textSecondary border border-brand-cardBorder rounded-tl-none ai-insights-content' 
-                      : 'bg-brand-accent text-white rounded-tr-none shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-                  }`}>
-                    {isAi ? (
-                      <div dangerouslySetInnerHTML={{ __html: msg.text }} />
-                    ) : (
-                      <p>{msg.text}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex-1 p-5 overflow-y-auto space-y-4 flex flex-col scrollbar-thin">
+            <AnimatePresence>
+              {chatHistory.map((msg, index) => {
+                const isAi = msg.sender === 'ai';
+                return (
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className={`flex flex-col max-w-[85%] ${isAi ? 'self-start items-start' : 'self-end items-end'}`}
+                  >
+                    <span className="text-[9px] uppercase font-bold text-brand-textSecondary tracking-wider mb-1 px-1 opacity-70">
+                      {isAi ? 'Advisor' : 'You'}
+                    </span>
+                    <div className={`p-4 rounded-2xl text-sm leading-relaxed ${
+                      isAi 
+                        ? 'glass-panel text-brand-textSecondary border border-brand-cardBorder rounded-tl-none ai-insights-content font-medium' 
+                        : 'bg-brand-accent text-white rounded-tr-none shadow-[0_4px_15px_rgba(0,208,132,0.18)] font-semibold'
+                    }`}>
+                      {isAi ? (
+                        <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+                      ) : (
+                        <p className="m-0">{msg.text}</p>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
 
-            {chatLoading && (
-              <div className="self-start flex flex-col items-start max-w-[85%]">
-                <span className="text-[9px] uppercase font-semibold text-brand-textSecondary tracking-wider mb-1 px-1">
-                  SpendWise AI
-                </span>
-                <div className="glass-panel p-4 rounded-2xl text-sm border border-brand-cardBorder rounded-tl-none flex items-center space-x-3">
-                  <span className="w-4 h-4 border-2 border-brand-accent/20 border-t-brand-accent rounded-full animate-spin"></span>
-                  <span className="text-brand-textSecondary animate-pulse">Thinking...</span>
-                </div>
-              </div>
-            )}
-            {/* Invisible anchor — always scrolled into view on new messages */}
+              {chatLoading && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="self-start flex flex-col items-start max-w-[85%]"
+                >
+                  <span className="text-[9px] uppercase font-bold text-brand-textSecondary tracking-wider mb-1 px-1">
+                    Advisor
+                  </span>
+                  <div className="glass-panel p-4 rounded-2xl text-sm border border-brand-cardBorder rounded-tl-none flex items-center space-x-3">
+                    <span className="w-4 h-4 border-2 border-brand-accent/20 border-t-brand-accent rounded-full animate-spin"></span>
+                    <span className="text-brand-textSecondary animate-pulse font-medium">Thinking...</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div ref={chatBottomRef} />
           </div>
 
           {/* Suggestion drawer */}
-          <div className="px-5 py-2.5 bg-white/5 border-t border-brand-cardBorder/50 flex flex-wrap gap-2 items-center">
-            <span className="text-[10px] text-brand-textSecondary font-semibold uppercase tracking-wider">Suggestions:</span>
-            <button
-              onClick={() => handleSendQuestion('Where was my highest spending this month?')}
-              disabled={chatLoading}
-              className="text-xs px-3 py-1 rounded-full bg-white/5 border border-brand-cardBorder text-brand-textSecondary hover:border-brand-accent/30 hover:text-brand-textPrimary transition cursor-pointer"
-            >
-              Where was my highest spending?
-            </button>
-            <button
-              onClick={() => handleSendQuestion('How can I control my expenses?')}
-              disabled={chatLoading}
-              className="text-xs px-3 py-1 rounded-full bg-white/5 border border-brand-cardBorder text-brand-textSecondary hover:border-brand-accent/30 hover:text-brand-textPrimary transition cursor-pointer"
-            >
-              How can I control my expenses?
-            </button>
-            <button
-              onClick={() => handleSendQuestion('Give me a savings plan for this month.')}
-              disabled={chatLoading}
-              className="text-xs px-3 py-1 rounded-full bg-white/5 border border-brand-cardBorder text-brand-textSecondary hover:border-brand-accent/30 hover:text-brand-textPrimary transition cursor-pointer"
-            >
-              Savings plan for this month?
-            </button>
+          <div className="px-4 py-2.5 bg-white/5 border-t border-brand-cardBorder/50 flex flex-wrap gap-2 items-center z-10">
+            <span className="text-[9px] text-brand-textSecondary font-bold uppercase tracking-wider">Quick Prompts:</span>
+            {chatSuggestions.map((s, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSendQuestion(s.query)}
+                disabled={chatLoading}
+                className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-brand-cardBorder text-brand-textSecondary hover:border-brand-accent/35 hover:text-brand-textPrimary transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {s.label}
+              </button>
+            ))}
           </div>
 
           {/* Input Area */}
@@ -273,7 +332,7 @@ const AiInsightsPage = () => {
               e.preventDefault();
               handleSendQuestion();
             }}
-            className="p-4 border-t border-brand-cardBorder bg-white/5 flex items-center gap-2"
+            className="p-4 border-t border-brand-cardBorder bg-white/5 flex items-center gap-2 z-10"
           >
             <input
               type="text"
@@ -283,15 +342,17 @@ const AiInsightsPage = () => {
               className="flex-1 glass-input px-4 py-3 rounded-xl text-sm"
               disabled={chatLoading}
             />
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={chatLoading || !userQuestion.trim()}
-              className="p-3 bg-brand-accent hover:bg-brand-accentHover text-white rounded-xl transition glow-btn shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-3.5 bg-brand-accent hover:bg-brand-accentHover text-white rounded-xl transition glow-btn shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-5 h-5" />
-            </button>
+              <Send className="w-4.5 h-4.5" />
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -28,9 +28,9 @@ public class ReportService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    public byte[] generateExcelReport(String userId, LocalDate startDate, LocalDate endDate) throws IOException {
-        // +1 day on endDate because MongoDB Between is exclusive on the upper bound
-        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(userId, startDate, endDate.plusDays(1));
+    public byte[] generateExcelReport(Long userId, LocalDate startDate, LocalDate endDate) throws IOException {
+        // JPA Between is inclusive on both ends
+        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Monthly Expense Report");
@@ -114,9 +114,9 @@ public class ReportService {
         }
     }
 
-    public byte[] generatePdfReport(String userId, LocalDate startDate, LocalDate endDate) throws Exception {
-        // +1 day on endDate because MongoDB Between is exclusive on the upper bound
-        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(userId, startDate, endDate.plusDays(1));
+    public byte[] generatePdfReport(Long userId, LocalDate startDate, LocalDate endDate) throws Exception {
+        // JPA Between is inclusive on both ends
+        List<Expense> expenses = expenseRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
         double totalExpense = expenses.stream().mapToDouble(Expense::getAmount).sum();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -19,7 +19,7 @@ public class AiController {
     @Autowired
     private AiService aiService;
 
-    private String getCurrentUserId() {
+    private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return userDetails.getId();

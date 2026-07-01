@@ -1,26 +1,29 @@
 package com.example.expensetracker.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "budgets")
+@Entity
+@Table(name = "budgets")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Budget {
+
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Indexed
-    private String userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
+    @Column(nullable = false)
     private String category;
 
+    @Column(nullable = false)
     private Double monthlyLimit;
 }

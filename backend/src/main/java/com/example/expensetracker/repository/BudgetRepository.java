@@ -1,14 +1,14 @@
 package com.example.expensetracker.repository;
 
 import com.example.expensetracker.model.Budget;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BudgetRepository extends MongoRepository<Budget, String> {
-    List<Budget> findByUserId(String userId);
-    Optional<Budget> findByUserIdAndCategory(String userId, String category);
+public interface BudgetRepository extends JpaRepository<Budget, Long> {
+    List<Budget> findByUserId(Long userId);
+    Optional<Budget> findByUserIdAndCategory(Long userId, String category);
 }
