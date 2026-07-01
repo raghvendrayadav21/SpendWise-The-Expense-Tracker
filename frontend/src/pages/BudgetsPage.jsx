@@ -9,14 +9,14 @@ import api from '../services/api';
 const CategoriesList = ['Food', 'Rent', 'Utilities', 'Entertainment', 'Travel', 'Shopping', 'Healthcare', 'Others'];
 
 const CATEGORY_META = {
-  Food:          { icon: Utensils,     color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
-  Rent:          { icon: Home,         color: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-500/20' },
-  Utilities:     { icon: Lightbulb,    color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-  Entertainment: { icon: Clapperboard, color: 'text-pink-400',   bg: 'bg-pink-500/10',   border: 'border-pink-500/20' },
-  Travel:        { icon: Car,          color: 'text-cyan-400',   bg: 'bg-cyan-500/10',   border: 'border-cyan-500/20' },
-  Shopping:      { icon: ShoppingBag,  color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-  Healthcare:    { icon: HeartPulse,   color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/20' },
-  Others:        { icon: PackageOpen,  color: 'text-slate-400',  bg: 'bg-slate-500/10',  border: 'border-slate-500/20' },
+  Food: { icon: Utensils, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
+  Rent: { icon: Home, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+  Utilities: { icon: Lightbulb, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+  Entertainment: { icon: Clapperboard, color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
+  Travel: { icon: Car, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
+  Shopping: { icon: ShoppingBag, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+  Healthcare: { icon: HeartPulse, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+  Others: { icon: PackageOpen, color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20' },
 };
 
 const cardVariants = {
